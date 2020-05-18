@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8bf91e4ec8d24a23ae31710d4ca8d7cd" Name="Diagram1">
+        <EntityTypeShape EntityType="ProjectModel.admin" Width="1.5" PointX="3.125" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProjectModel.register" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <AssociationConnector Association="ProjectModel.register_admin_fk" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ProjectModel.Friend" Width="1.5" PointX="3" PointY="13.125" />
+        <EntityTypeShape EntityType="ProjectModel.Group_key" Width="1.5" PointX="5.25" PointY="10" />
+        <EntityTypeShape EntityType="ProjectModel.Group_table" Width="1.5" PointX="3" PointY="8.25" />
+        <AssociationConnector Association="ProjectModel.FK_Friend_Register" />
+        <AssociationConnector Association="ProjectModel.FK_Group_key_Group" />
+        <AssociationConnector Association="ProjectModel.FK_Group_Register" />
+        <EntityTypeShape EntityType="ProjectModel.Post" Width="1.5" PointX="5.25" PointY="5.875" />
+        <AssociationConnector Association="ProjectModel.FK_Post_Group" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

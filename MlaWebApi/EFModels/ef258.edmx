@@ -1,0 +1,449 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ProjectModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="admin">
+          <Key>
+            <PropertyRef Name="idAdmin" />
+          </Key>
+          <Property Name="idAdmin" Type="nvarchar" MaxLength="12" Nullable="false" />
+          <Property Name="firstName" Type="nvarchar" MaxLength="45" />
+          <Property Name="lastName" Type="nvarchar" MaxLength="45" />
+          <Property Name="emailId" Type="nvarchar" MaxLength="45" />
+          <Property Name="telephone" Type="nvarchar" MaxLength="15" />
+          <Property Name="userId" Type="bigint" />
+          <Property Name="aliasMailId" Type="nvarchar" MaxLength="45" />
+          <Property Name="address" Type="nvarchar" MaxLength="100" />
+          <Property Name="skypeId" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Friend">
+          <Key>
+            <PropertyRef Name="friendId" />
+          </Key>
+          <Property Name="userId" Type="bigint" Nullable="false" />
+          <Property Name="FriendUserId" Type="bigint" />
+          <Property Name="GroupId" Type="bigint" />
+          <Property Name="friendId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Group_key">
+          <Key>
+            <PropertyRef Name="group_key_id" />
+          </Key>
+          <Property Name="user_id" Type="bigint" Nullable="false" />
+          <Property Name="group_key_id" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="group_key" Type="varchar(max)" />
+          <Property Name="group_id" Type="bigint" />
+          <Property Name="status" Type="bit" />
+          <Property Name="version" Type="numeric" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Group_table">
+          <Key>
+            <PropertyRef Name="group_id" />
+          </Key>
+          <Property Name="user_id" Type="bigint" Nullable="false" />
+          <Property Name="group_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="group_name" Type="varchar" MaxLength="50" />
+          <Property Name="status" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Post">
+          <Key>
+            <PropertyRef Name="postid" />
+          </Key>
+          <Property Name="post" Type="nchar" MaxLength="100" />
+          <Property Name="postType" Type="nvarchar" MaxLength="50" />
+          <Property Name="groupid" Type="bigint" Nullable="false" />
+          <Property Name="postid" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version_no" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="timestamp" Type="smalldatetime" />
+          <Property Name="digitalsignature" Type="nvarchar" MaxLength="50" />
+          <Property Name="owner" Type="nvarchar" MaxLength="50" />
+          <Property Name="session_key" Type="nvarchar" MaxLength="100" />
+          <Property Name="userId" Type="bigint" />
+        </EntityType>
+        <EntityType Name="register">
+          <Key>
+            <PropertyRef Name="userId" />
+          </Key>
+          <Property Name="userName" Type="nvarchar" MaxLength="12" />
+          <Property Name="password" Type="nvarchar" MaxLength="100" />
+          <Property Name="userType" Type="nvarchar" MaxLength="100" />
+          <Property Name="userId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="publickey" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK_Friend_Register">
+          <End Role="register" Type="Self.register" Multiplicity="1" />
+          <End Role="Friend" Type="Self.Friend" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="Friend">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_key_Group">
+          <End Role="Group_table" Type="Self.Group_table" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Group_key" Type="Self.Group_key" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group_table">
+              <PropertyRef Name="group_id" />
+            </Principal>
+            <Dependent Role="Group_key">
+              <PropertyRef Name="group_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_Register">
+          <End Role="register" Type="Self.register" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Group_table" Type="Self.Group_table" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="Group_table">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Post_Group">
+          <End Role="Group_table" Type="Self.Group_table" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Post" Type="Self.Post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group_table">
+              <PropertyRef Name="group_id" />
+            </Principal>
+            <Dependent Role="Post">
+              <PropertyRef Name="groupid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="register_admin_fk">
+          <End Role="register" Type="Self.register" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="admin">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProjectModelStoreContainer">
+          <EntitySet Name="admin" EntityType="Self.admin" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Friend" EntityType="Self.Friend" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Group_key" EntityType="Self.Group_key" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Group_table" EntityType="Self.Group_table" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Post" EntityType="Self.Post" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="register" EntityType="Self.register" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Friend_Register" Association="Self.FK_Friend_Register">
+            <End Role="register" EntitySet="register" />
+            <End Role="Friend" EntitySet="Friend" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_key_Group" Association="Self.FK_Group_key_Group">
+            <End Role="Group_table" EntitySet="Group_table" />
+            <End Role="Group_key" EntitySet="Group_key" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Register" Association="Self.FK_Group_Register">
+            <End Role="register" EntitySet="register" />
+            <End Role="Group_table" EntitySet="Group_table" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Post_Group" Association="Self.FK_Post_Group">
+            <End Role="Group_table" EntitySet="Group_table" />
+            <End Role="Post" EntitySet="Post" />
+          </AssociationSet>
+          <AssociationSet Name="register_admin_fk" Association="Self.register_admin_fk">
+            <End Role="register" EntitySet="register" />
+            <End Role="admin" EntitySet="admin" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ProjectModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="admin">
+          <Key>
+            <PropertyRef Name="idAdmin" />
+          </Key>
+          <Property Name="idAdmin" Type="String" MaxLength="12" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="firstName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="lastName" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="emailId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="telephone" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="userId" Type="Int64" />
+          <Property Name="aliasMailId" Type="String" MaxLength="45" FixedLength="false" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="skypeId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="register" Relationship="Self.register_admin_fk" FromRole="admin" ToRole="register" />
+        </EntityType>
+        <EntityType Name="register">
+          <Key>
+            <PropertyRef Name="userId" />
+          </Key>
+          <Property Name="userName" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="userType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="userId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="publickey" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="admins" Relationship="Self.register_admin_fk" FromRole="register" ToRole="admin" />
+          <NavigationProperty Name="Friends" Relationship="ProjectModel.FK_Friend_Register" FromRole="register" ToRole="Friend" />
+          <NavigationProperty Name="Group_table" Relationship="ProjectModel.FK_Group_Register" FromRole="register" ToRole="Group_table" />
+        </EntityType>
+        <Association Name="register_admin_fk">
+          <End Role="register" Type="Self.register" Multiplicity="0..1" />
+          <End Role="admin" Type="Self.admin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="admin">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProjectEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="admins" EntityType="Self.admin" />
+          <EntitySet Name="registers" EntityType="Self.register" />
+          <AssociationSet Name="register_admin_fk" Association="Self.register_admin_fk">
+            <End Role="register" EntitySet="registers" />
+            <End Role="admin" EntitySet="admins" />
+          </AssociationSet>
+          <EntitySet Name="Friends" EntityType="ProjectModel.Friend" />
+          <EntitySet Name="Group_key" EntityType="ProjectModel.Group_key" />
+          <EntitySet Name="Group_table" EntityType="ProjectModel.Group_table" />
+          <AssociationSet Name="FK_Friend_Register" Association="ProjectModel.FK_Friend_Register">
+            <End Role="register" EntitySet="registers" />
+            <End Role="Friend" EntitySet="Friends" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_key_Group" Association="ProjectModel.FK_Group_key_Group">
+            <End Role="Group_table" EntitySet="Group_table" />
+            <End Role="Group_key" EntitySet="Group_key" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Register" Association="ProjectModel.FK_Group_Register">
+            <End Role="register" EntitySet="registers" />
+            <End Role="Group_table" EntitySet="Group_table" />
+          </AssociationSet>
+          <EntitySet Name="Posts" EntityType="ProjectModel.Post" />
+          <AssociationSet Name="FK_Post_Group" Association="ProjectModel.FK_Post_Group">
+            <End Role="Group_table" EntitySet="Group_table" />
+            <End Role="Post" EntitySet="Posts" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Friend">
+          <Key>
+            <PropertyRef Name="friendId" />
+          </Key>
+          <Property Name="userId" Type="Int64" Nullable="false" />
+          <Property Name="FriendUserId" Type="Int64" />
+          <Property Name="GroupId" Type="Int64" />
+          <Property Name="friendId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="register" Relationship="ProjectModel.FK_Friend_Register" FromRole="Friend" ToRole="register" />
+        </EntityType>
+        <EntityType Name="Group_key">
+          <Key>
+            <PropertyRef Name="group_key_id" />
+          </Key>
+          <Property Name="user_id" Type="Int64" Nullable="false" />
+          <Property Name="group_key_id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="group_key1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="group_id" Type="Int64" />
+          <Property Name="status" Type="Boolean" />
+          <Property Name="version" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="Group_table" Relationship="ProjectModel.FK_Group_key_Group" FromRole="Group_key" ToRole="Group_table" />
+        </EntityType>
+        <EntityType Name="Group_table">
+          <Key>
+            <PropertyRef Name="group_id" />
+          </Key>
+          <Property Name="user_id" Type="Int64" Nullable="false" />
+          <Property Name="group_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="group_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Group_key" Relationship="ProjectModel.FK_Group_key_Group" FromRole="Group_table" ToRole="Group_key" />
+          <NavigationProperty Name="register" Relationship="ProjectModel.FK_Group_Register" FromRole="Group_table" ToRole="register" />
+          <NavigationProperty Name="Posts" Relationship="ProjectModel.FK_Post_Group" FromRole="Group_table" ToRole="Post" />
+        </EntityType>
+        <Association Name="FK_Friend_Register">
+          <End Type="ProjectModel.register" Role="register" Multiplicity="1" />
+          <End Type="ProjectModel.Friend" Role="Friend" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="Friend">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_key_Group">
+          <End Type="ProjectModel.Group_table" Role="Group_table" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ProjectModel.Group_key" Role="Group_key" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group_table">
+              <PropertyRef Name="group_id" />
+            </Principal>
+            <Dependent Role="Group_key">
+              <PropertyRef Name="group_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Group_Register">
+          <End Type="ProjectModel.register" Role="register" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ProjectModel.Group_table" Role="Group_table" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="register">
+              <PropertyRef Name="userId" />
+            </Principal>
+            <Dependent Role="Group_table">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Post">
+          <Key>
+            <PropertyRef Name="postid" />
+          </Key>
+          <Property Name="post1" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="postType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="groupid" Type="Int64" Nullable="false" />
+          <Property Name="postid" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version_no" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="timestamp" Type="DateTime" Precision="0" />
+          <Property Name="digitalsignature" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="owner" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="session_key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="userId" Type="Int64" />
+          <NavigationProperty Name="Group_table" Relationship="ProjectModel.FK_Post_Group" FromRole="Post" ToRole="Group_table" />
+        </EntityType>
+        <Association Name="FK_Post_Group">
+          <End Type="ProjectModel.Group_table" Role="Group_table" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="ProjectModel.Post" Role="Post" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group_table">
+              <PropertyRef Name="group_id" />
+            </Principal>
+            <Dependent Role="Post">
+              <PropertyRef Name="groupid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ProjectModelStoreContainer" CdmEntityContainer="ProjectEntities">
+          <EntitySetMapping Name="admins">
+            <EntityTypeMapping TypeName="ProjectModel.admin">
+              <MappingFragment StoreEntitySet="admin">
+                <ScalarProperty Name="idAdmin" ColumnName="idAdmin" />
+                <ScalarProperty Name="firstName" ColumnName="firstName" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+                <ScalarProperty Name="emailId" ColumnName="emailId" />
+                <ScalarProperty Name="telephone" ColumnName="telephone" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="aliasMailId" ColumnName="aliasMailId" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="skypeId" ColumnName="skypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="registers">
+            <EntityTypeMapping TypeName="ProjectModel.register">
+              <MappingFragment StoreEntitySet="register">
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="userType" ColumnName="userType" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="publickey" ColumnName="publickey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Friends">
+            <EntityTypeMapping TypeName="ProjectModel.Friend">
+              <MappingFragment StoreEntitySet="Friend">
+                <ScalarProperty Name="friendId" ColumnName="friendId" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="FriendUserId" ColumnName="FriendUserId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Group_key">
+            <EntityTypeMapping TypeName="ProjectModel.Group_key">
+              <MappingFragment StoreEntitySet="Group_key">
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="group_id" ColumnName="group_id" />
+                <ScalarProperty Name="group_key1" ColumnName="group_key" />
+                <ScalarProperty Name="group_key_id" ColumnName="group_key_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Group_table">
+            <EntityTypeMapping TypeName="ProjectModel.Group_table">
+              <MappingFragment StoreEntitySet="Group_table">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="group_name" ColumnName="group_name" />
+                <ScalarProperty Name="group_id" ColumnName="group_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Posts">
+            <EntityTypeMapping TypeName="ProjectModel.Post">
+              <MappingFragment StoreEntitySet="Post">
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="session_key" ColumnName="session_key" />
+                <ScalarProperty Name="owner" ColumnName="owner" />
+                <ScalarProperty Name="digitalsignature" ColumnName="digitalsignature" />
+                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
+                <ScalarProperty Name="version_no" ColumnName="version_no" />
+                <ScalarProperty Name="postid" ColumnName="postid" />
+                <ScalarProperty Name="groupid" ColumnName="groupid" />
+                <ScalarProperty Name="postType" ColumnName="postType" />
+                <ScalarProperty Name="post1" ColumnName="post" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
